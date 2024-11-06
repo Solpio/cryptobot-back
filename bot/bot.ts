@@ -28,7 +28,6 @@ bot.command("start", async (ctx) => {
     }
   }
 
-  // const photoSizes = ctx.message?.photo;
   const userPhotos = await ctx.api.getUserProfilePhotos(ctx.from?.id || 0);
   if (userData && userPhotos) {
     const largestPhoto = userPhotos.photos[0][userPhotos.photos[0].length - 1];

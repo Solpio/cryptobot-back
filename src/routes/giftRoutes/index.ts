@@ -2,6 +2,7 @@ import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { Currency } from "@prisma/client";
 import { createGift } from "../../dao/gift/createGift";
 import { getGifts } from "../../dao/gift/getGifts";
+import { IUpdateGift, updateGift } from "../../dao/gift/updateGift";
 
 interface CreateGiftBody {
   name: string;
@@ -43,6 +44,22 @@ export async function giftRoutes(fastify: FastifyInstance) {
         reply.status(200).send(gifts);
       } catch (error) {
         console.error("Error getting gifts:", error);
+        reply.status(500).send({ error: "Unable to create gift" });
+      }
+    },
+  );
+  fastify.patch(
+    "/gifts/:id",
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      try {
+        const { id } = request.params as { id: string };
+        const data = request.body as Omit<IUpdateGift, "id">;
+
+        const gift = await updateGift({ id, ...data });
+
+        reply.status(200).send(gift);
+      } catch (error) {
+        console.error("Error updating gift:", error);
         reply.status(500).send({ error: "Unable to create gift" });
       }
     },
