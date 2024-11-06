@@ -13,22 +13,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// model User {
-//   id     String @id @default(auto()) @map("_id") @db.ObjectId
-//   email String  @unique
-//   name  String?
-//   posts Post[]
-// }
-//
-// model Post {
-//   // id        Int     @id @default(autoincrement())
-//   id     String @id @default(auto()) @map("_id") @db.ObjectId
-//   title     String
-//   content   String?
-//   published Boolean @default(false)
-//   author    User    @relation(fields: [authorId], references: [id])
-//   authorId  String @db.ObjectId
-// }
+model UserPhoto {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  fileId    String      @unique
+  photoUrl  String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @unique @db.ObjectId
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+model User {
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
+  userPhoto    UserPhoto?
+  tgId         Int        @unique
+  username     String?
+  firstName    String?
+  lastName     String?
+  languageCode String?
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
 
 enum Currency {
   TON

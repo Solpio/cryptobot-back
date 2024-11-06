@@ -1,11 +1,14 @@
 import fastify from "fastify";
 import { giftRoutes } from "./routes/giftRoutes";
+import { bot } from "../bot/bot";
 
 const server = fastify();
 
-server.get("/test", async (request, reply) => {});
-
 server.register(giftRoutes);
+
+bot.start().then(() => {
+  console.log("Telegram Bot запущен!");
+});
 
 server.listen({ port: 8080 }, (err, address) => {
   if (err) {

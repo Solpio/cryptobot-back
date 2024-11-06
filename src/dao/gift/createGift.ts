@@ -9,7 +9,7 @@ export const createGift = async (
   data: ICreateGift,
 ): Promise<Gift | undefined> => {
   try {
-    const newGift = await prisma.gift.create({
+    const gift = await prisma.gift.create({
       data: {
         name: data.name,
         price: data.price,
@@ -18,8 +18,8 @@ export const createGift = async (
         lottie: data.lottie,
       },
     });
-    console.log("Gift created:", newGift);
-    return newGift;
+    console.log("Gift created:", gift);
+    return gift;
   } catch (error) {
     console.error("Error creating gift:", error);
   }

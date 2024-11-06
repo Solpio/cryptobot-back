@@ -1,5 +1,5 @@
 {
-  "name": "BEProjects",
+  "name": "crypto-bot-be-project",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
@@ -10,6 +10,7 @@
   "dependencies": {
     "@prisma/client": "5.21.1",
     "fastify": "^5.1.0",
+    "grammy": "^1.31.0",
     "prettier": "^3.3.3",
     "prisma": "^5.21.1",
     "ts-node": "^10.9.2"
