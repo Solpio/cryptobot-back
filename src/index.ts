@@ -1,12 +1,11 @@
 import fastify from "fastify";
 import { giftRoutes } from "./routes/giftRoutes";
 import { bot } from "./bot/bot";
-import { authMiddleware } from "./middlewares/authMiddleware";
 
 const server = fastify({ logger: true });
 
 server.register(giftRoutes);
-server.addHook("preHandler", authMiddleware);
+// server.addHook("preHandler", authMiddleware);
 
 bot.start().then(() => {
   console.log("Telegram Bot запущен!");
