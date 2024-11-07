@@ -2,7 +2,7 @@ import { UserPhoto } from "@prisma/client";
 import prisma from "../../database/prisma";
 
 type IUpdateUserPhoto = {
-  userId: number;
+  userId: string;
 } & Partial<UserPhoto>;
 
 export const updateUserPhoto = async ({

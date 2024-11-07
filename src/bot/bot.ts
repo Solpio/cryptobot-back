@@ -1,8 +1,10 @@
-import { Bot } from "grammy";
+import { Bot, InlineKeyboard } from "grammy";
 import { getUser } from "../dao/user/getUser";
 import { createUser } from "../dao/user/createUser";
 import { createUserPhoto } from "../dao/userPhoto/createUserPhoto";
 import { User } from "@prisma/client";
+import { getUserPhotoByUser } from "../dao/userPhoto/getUserPhotoByUser";
+import { updateUserPhoto } from "../dao/userPhoto/updateUserPhoto";
 
 export const bot = new Bot(process.env.BOT_TOKEN ?? "");
 
@@ -38,10 +40,24 @@ bot.command("start", async (ctx) => {
           `https://api.telegram.org/file/bot${ctx.api.token}/${file.file_path}`,
       );
 
-    await createUserPhoto({
-      fileId: largestPhoto.file_id,
-      photoUrl: fileUrl,
-      userId: userData.id,
-    });
+    const existUserPhoto = await getUserPhotoByUser(userData.id);
+
+    if (existUserPhoto) {
+      await updateUserPhoto({
+        fileId: largestPhoto.file_id,
+        userId: userData.id,
+      });
+    } else {
+      await createUserPhoto({
+        fileId: largestPhoto.file_id,
+        photoUrl: fileUrl,
+        userId: userData.id,
+      });
+    }
   }
+  const webAppUrl = process.env.WEB_APP_URL || "";
+  const keyboard = new InlineKeyboard().webApp("Открыть Web App", webAppUrl);
+  await ctx.reply("Нажмите кнопку ниже, чтобы открыть Web App:", {
+    reply_markup: keyboard,
+  });
 });
