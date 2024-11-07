@@ -5,6 +5,9 @@ import { bot } from "./bot/bot";
 const server = fastify({ logger: true });
 
 server.register(giftRoutes);
+server.get("/", async (req, reply) => {
+  reply.status(200).send("Hello world");
+});
 // server.addHook("preHandler", authMiddleware);
 
 bot.start().then(() => {
