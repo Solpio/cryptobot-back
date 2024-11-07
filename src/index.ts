@@ -1,9 +1,13 @@
 import fastify from "fastify";
 import { giftRoutes } from "./routes/giftRoutes";
 import { bot } from "./bot/bot";
+import fastifyCors from "@fastify/cors";
 
 const server = fastify({ logger: true });
 
+server.register(fastifyCors, {
+  origin: true,
+});
 server.register(giftRoutes);
 server.get("/", async (req, reply) => {
   reply.status(200).send("Hello world");
