@@ -1,13 +1,14 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
-import { Currency } from "@prisma/client";
+import { CurrencyAsset } from "@prisma/client";
 import { createGift } from "../../dao/gift/createGift";
 import { getGifts } from "../../dao/gift/getGifts";
 import { IUpdateGift, updateGift } from "../../dao/gift/updateGift";
+import { cryptoBotClient } from "../../cryptoBot/cryptoBot";
 
 interface CreateGiftBody {
   name: string;
   price: number;
-  currency: Currency;
+  currency: CurrencyAsset;
   total: number;
   lottie: any;
 }
@@ -39,6 +40,8 @@ export async function giftRoutes(fastify: FastifyInstance) {
     "/gifts",
     async (request: FastifyRequest, reply: FastifyReply) => {
       try {
+        const me = await cryptoBotClient.getBalances();
+        console.log(me);
         const gifts = await getGifts();
 
         reply.status(200).send(gifts);

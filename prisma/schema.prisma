@@ -24,32 +24,91 @@ model UserPhoto {
 }
 
 model User {
-  id           String     @id @default(auto()) @map("_id") @db.ObjectId
-  userPhoto    UserPhoto?
-  tgId         Int        @unique
-  username     String?
-  firstName    String?
-  lastName     String?
-  languageCode String?
-  updatedAt    DateTime   @updatedAt
-  createdAt    DateTime   @default(now())
+  id            String     @id @default(auto()) @map("_id") @db.ObjectId
+  userPhoto     UserPhoto?
+  tgId          Int        @unique
+  username      String?
+  firstName     String?
+  lastName      String?
+  languageCode  String?
+  updatedAt     DateTime   @updatedAt
+  createdAt     DateTime   @default(now())
+  purchases     Purchase[]
+  receivedGifts Purchase[] @relation("Recipient")
 }
 
-enum Currency {
+enum CurrencyAsset {
   TON
   USDT
   ETH
+  BTC
+  LTC
+  BNB
+  TRX
+  USDC
+}
+
+enum FiatAsset {
+  USD
+  EUR
+  RUB
+  BYN
+  UAH
+  GBP
+  CNY
+  KZT
+  UZS
+  GEL
+  TRY
+  AMD
+  THB
+  INR
+  BRL
+  IDR
+  AZN
+  AED
+  PLN
+  ILS
+}
+
+enum CurrencyType {
+  crypto
+  fiat
 }
 
 model Gift {
-  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  id              String        @id @default(auto()) @map("_id") @db.ObjectId
   name            String
   price           Int
-  currency        Currency
+  currency        CurrencyAsset
   total           Int
   lottie          Json
   backgroundLight String?
   backgroundDark  String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  purchases       Purchase[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model Purchase {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  amount        Int
+  currencyType  CurrencyAsset
+  currencyAsset CurrencyAsset?
+  currencyFiat  FiatAsset?
+  recipientTgId Int?
+  status        PurchaseStatus
+  user          User           @relation(fields: [userId], references: [id])
+  userId        String         @unique @db.ObjectId
+  gift          Gift           @relation(fields: [giftId], references: [id])
+  giftId        String         @db.ObjectId
+  recipient     User?          @relation("Recipient", fields: [recipientId], references: [id])
+  recipientId   String?        @db.ObjectId
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+enum PurchaseStatus {
+  PENDING_PAYMENT
+  PAID
 }

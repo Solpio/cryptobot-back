@@ -250,6 +250,11 @@ create-require@^1.1.0:
   resolved "https://registry.yarnpkg.com/create-require/-/create-require-1.1.1.tgz#c1d7e8f1e5f6cfc9ff65f9cd352d37348756c333"
   integrity sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==
 
+crypto-bot-api@^0.3.3:
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/crypto-bot-api/-/crypto-bot-api-0.3.3.tgz#8f11f62ac76ab038d8da188c0b8a018f1248fc9e"
+  integrity sha512-EKyY6eMujJ2rIoNezNBdChW6Fwqv5xepYpH6tlqX+9ZoeL0b/rQP7osJw6MiAoe3bO9XznfS7TB7/mrZJCGhcg==
+
 debug@^4, debug@^4.3.4:
   version "4.3.7"
   resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.7.tgz#87945b4151a011d76d95a198d7111c865c360a52"

@@ -1,7 +1,7 @@
 import { Bot } from "grammy";
-import { getUser } from "../src/dao/user/getUser";
-import { createUser } from "../src/dao/user/createUser";
-import { createUserPhoto } from "../src/dao/userPhoto/createUserPhoto";
+import { getUser } from "../dao/user/getUser";
+import { createUser } from "../dao/user/createUser";
+import { createUserPhoto } from "../dao/userPhoto/createUserPhoto";
 import { User } from "@prisma/client";
 
 export const bot = new Bot(process.env.BOT_TOKEN ?? "");
