@@ -2,6 +2,7 @@ import fastify from "fastify";
 import { giftRoutes } from "./routes/giftRoutes";
 import { bot } from "./bot/bot";
 import fastifyCors from "@fastify/cors";
+import { authMiddleware } from "./middlewares/authMiddleware";
 
 const server = fastify({ logger: true });
 
@@ -9,10 +10,12 @@ server.register(fastifyCors, {
   origin: true,
 });
 server.register(giftRoutes);
+
+server.addHook("preHandler", authMiddleware);
+
 server.get("/", async (req, reply) => {
   reply.status(200).send("Hello world");
 });
-// server.addHook("preHandler", authMiddleware);
 
 bot.start().then(() => {
   console.log("Telegram Bot запущен!");
