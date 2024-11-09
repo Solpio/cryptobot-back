@@ -11,6 +11,9 @@ import { getGift } from "../../dao/gift/getGift";
 import { getPurchasesByUser } from "../../dao/purchase/getPurchasesByUser";
 import { getUser } from "../../dao/user/getUser";
 import { createOwnerHistory } from "../../dao/ownerHistory/createOwnerHistory";
+import { cryptoBotClient } from "../../cryptoBot/cryptoBot";
+import { CryptoCurrencyCode, CurrencyType } from "crypto-bot-api";
+import { currencyToCryptoBotCurrency } from "../../utils/currenceToCryproBotCurrency";
 
 interface GetPurchaseBody {
   giftId: string;
@@ -61,7 +64,7 @@ export async function purchaseRoutes(fastify: FastifyInstance) {
           userId: user.id,
           amount: gift.price,
           giftId: giftId,
-          status: "PAID",
+          status: "PENDING_PAYMENT",
           currencyType: "CRYPTO",
           currencyAsset: gift.currency,
           currencyFiat: null,
@@ -73,13 +76,16 @@ export async function purchaseRoutes(fastify: FastifyInstance) {
             ownerId: user.id,
             purchaseId: purchase.id,
           });
-          // const invoice = cryptoBotClient.createInvoice({
-          //   currencyType: CurrencyType.Crypto,
-          //   amount: purchase.amount,
-          //   asset: purchase.currencyAsset as CryptoCurrencyCode,
-          // });
+          const invoice = await cryptoBotClient.createInvoice({
+            currencyType: CurrencyType.Crypto,
+            amount: purchase.amount,
+            asset: currencyToCryptoBotCurrency(purchase.currencyAsset),
+            description: `Purchasing a ${gift.name} gift`,
+          });
 
-          return reply.status(201).send(purchase);
+          return reply
+            .status(201)
+            .send({ ...purchase, miniAppPayUrl: invoice.miniAppPayUrl });
         } else {
           reply.status(500).send({ error: "Unable to create purchase" });
         }
