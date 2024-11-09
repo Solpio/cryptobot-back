@@ -1,9 +1,4 @@
-import {
-  FastifyInstance,
-  FastifyRequest,
-  FastifyReply,
-  FastifySchema,
-} from "fastify";
+import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { CurrencyAsset } from "@prisma/client";
 import { createGift } from "../../dao/gift/createGift";
 import { IUpdateGift, updateGift } from "../../dao/gift/updateGift";
