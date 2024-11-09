@@ -3,6 +3,7 @@ import { giftRoutes } from "./routes/giftRoutes";
 import { bot } from "./bot/bot";
 import fastifyCors from "@fastify/cors";
 import { authMiddleware } from "./middlewares/authMiddleware";
+import { purchaseRoutes } from "./routes/purchaseRoutes";
 
 const server = fastify({ logger: true });
 
@@ -10,6 +11,7 @@ server.register(fastifyCors, {
   origin: true,
 });
 server.register(giftRoutes);
+server.register(purchaseRoutes);
 
 server.addHook("preHandler", authMiddleware);
 

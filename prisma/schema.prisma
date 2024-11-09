@@ -93,7 +93,7 @@ model Gift {
 model Purchase {
   id            String         @id @default(auto()) @map("_id") @db.ObjectId
   amount        Int
-  currencyType  CurrencyAsset
+  currencyType  CurrencyType
   currencyAsset CurrencyAsset?
   currencyFiat  FiatAsset?
   recipientTgId Int?
