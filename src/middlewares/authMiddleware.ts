@@ -4,6 +4,10 @@ import crypto from "crypto";
 
 export async function authMiddleware(req: FastifyRequest, reply: FastifyReply) {
   const token = req.headers.authorization;
+  const publicRoutes = ["/pay"];
+  if (publicRoutes.includes(req.url)) {
+    return;
+  }
 
   if (token && validateTelegramData(token)) {
     return; // Если проверка прошла, продолжаем выполнение запроса
