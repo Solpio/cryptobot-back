@@ -72,8 +72,8 @@ enum FiatAsset {
 }
 
 enum CurrencyType {
-  crypto
-  fiat
+  CRYPTO
+  FIAT
 }
 
 model Gift {

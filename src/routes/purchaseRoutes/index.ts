@@ -69,7 +69,7 @@ export async function purchaseRoutes(fastify: FastifyInstance) {
           amount: gift.price,
           giftId: giftId,
           status: "PAID",
-          currencyType: "crypto",
+          currencyType: "CRYPTO",
           currencyAsset: gift.currency,
           currencyFiat: null,
         });
