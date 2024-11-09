@@ -24,17 +24,16 @@ model UserPhoto {
 }
 
 model User {
-  id            String     @id @default(auto()) @map("_id") @db.ObjectId
-  userPhoto     UserPhoto?
-  tgId          Int        @unique
-  username      String?
-  firstName     String?
-  lastName      String?
-  languageCode  String?
-  updatedAt     DateTime   @updatedAt
-  createdAt     DateTime   @default(now())
-  purchases     Purchase[]
-  receivedGifts Purchase[] @relation("Recipient")
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
+  userPhoto    UserPhoto?
+  tgId         Int        @unique
+  username     String?
+  firstName    String?
+  lastName     String?
+  languageCode String?
+  updatedAt    DateTime   @updatedAt
+  createdAt    DateTime   @default(now())
+  purchases    Purchase[]
 }
 
 enum CurrencyAsset {
@@ -46,6 +45,7 @@ enum CurrencyAsset {
   BNB
   TRX
   USDC
+  JET
 }
 
 enum FiatAsset {
@@ -102,8 +102,6 @@ model Purchase {
   userId        String         @db.ObjectId
   gift          Gift           @relation(fields: [giftId], references: [id])
   giftId        String         @db.ObjectId
-  recipient     User?          @relation("Recipient", fields: [recipientId], references: [id])
-  recipientId   String?        @db.ObjectId
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 }

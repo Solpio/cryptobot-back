@@ -1,4 +1,3 @@
-import { Purchase } from "@prisma/client";
 import prisma from "../../database/prisma";
 
 export const getPurchasesCountByUser = async (
@@ -6,7 +5,7 @@ export const getPurchasesCountByUser = async (
 ): Promise<number | undefined> => {
   try {
     const purchasesCount = await prisma.purchase.count({
-      where: { recipientId: userId, status: "PAID" },
+      where: { userId: userId, status: "PAID" },
     });
     console.log("Purchases count by user found: ", purchasesCount);
     return purchasesCount;

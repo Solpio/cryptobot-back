@@ -6,6 +6,7 @@ import { authMiddleware } from "./middlewares/authMiddleware";
 import { purchaseRoutes } from "./routes/purchaseRoutes";
 import { userRoutes } from "./routes/userRoutes";
 import { leaderboardRoutes } from "./routes/leaderboardRoutes";
+import { payRoutes } from "./routes/pay";
 
 const server = fastify({ logger: true });
 
@@ -16,6 +17,7 @@ server.register(giftRoutes);
 server.register(purchaseRoutes);
 server.register(userRoutes);
 server.register(leaderboardRoutes);
+server.register(payRoutes);
 
 server.addHook("preHandler", authMiddleware);
 

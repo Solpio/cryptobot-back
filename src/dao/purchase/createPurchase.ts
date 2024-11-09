@@ -3,7 +3,7 @@ import prisma from "../../database/prisma";
 
 export type ICreatePurchase = Pick<
   Purchase,
-  "amount" | "currencyType" | "currencyAsset" | "currencyFiat" | "recipientTgId"
+  "amount" | "currencyType" | "currencyAsset" | "currencyFiat"
 > & {
   status: PurchaseStatus;
   giftId: string;
@@ -19,8 +19,6 @@ export const createPurchase = async (
         amount: data.amount,
         currencyType: data.currencyType,
         currencyFiat: data.currencyFiat,
-        recipientTgId: data.recipientTgId,
-        recipientId: data.recipientId,
         userId: data.userId,
         giftId: data.giftId,
         status: data.status,

@@ -13,18 +13,14 @@ import { getUser } from "../../dao/user/getUser";
 
 interface GetPurchaseBody {
   giftId: string;
-  recipientTgId: number;
-  recipientId?: string;
 }
 
 const postPurchaseRequestSchema: FastifySchema = {
   body: {
     type: "object",
-    required: ["giftId", "recipientTgId"],
+    required: ["giftId"],
     properties: {
       giftId: { type: "string" },
-      recipientTgId: { type: "number" },
-      recipientId: { type: "string", nullable: true },
     },
   },
 };
@@ -51,10 +47,8 @@ export async function purchaseRoutes(fastify: FastifyInstance) {
       try {
         const userId = +getIdByToken(request.headers.authorization || "");
         const user = await getUserByTg(userId);
-        const { giftId, recipientTgId, recipientId } =
-          request.body as GetPurchaseBody;
+        const { giftId } = request.body as GetPurchaseBody;
 
-        const recipient = await getUserByTg(recipientTgId);
         const gift = await getGift(giftId);
         if (!gift) {
           return reply.status(404).send({ message: "Gift not found" });
@@ -64,17 +58,25 @@ export async function purchaseRoutes(fastify: FastifyInstance) {
         }
         const purchase = await createPurchase({
           userId: user.id,
-          recipientTgId,
-          recipientId: recipient?.id,
           amount: gift.price,
           giftId: giftId,
-          status: "PAID",
+          status: "PENDING_PAYMENT",
           currencyType: "CRYPTO",
           currencyAsset: gift.currency,
           currencyFiat: null,
         });
 
-        return reply.status(201).send(purchase);
+        if (purchase) {
+          // const invoice = cryptoBotClient.createInvoice({
+          //   currencyType: CurrencyType.Crypto,
+          //   amount: purchase.amount,
+          //   asset: purchase.currencyAsset as CryptoCurrencyCode,
+          // });
+
+          return reply.status(201).send(purchase);
+        } else {
+          reply.status(500).send({ error: "Unable to create purchase" });
+        }
       } catch (error) {
         console.error("Error creating purchase:", error);
         reply.status(500).send({ error: "Unable to create purchase" });
