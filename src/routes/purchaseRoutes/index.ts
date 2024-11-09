@@ -10,6 +10,7 @@ import { createPurchase } from "../../dao/purchase/createPurchase";
 import { getGift } from "../../dao/gift/getGift";
 import { getPurchasesByUser } from "../../dao/purchase/getPurchasesByUser";
 import { getUser } from "../../dao/user/getUser";
+import { createOwnerHistory } from "../../dao/ownerHistory/createOwnerHistory";
 
 interface GetPurchaseBody {
   giftId: string;
@@ -60,13 +61,18 @@ export async function purchaseRoutes(fastify: FastifyInstance) {
           userId: user.id,
           amount: gift.price,
           giftId: giftId,
-          status: "PENDING_PAYMENT",
+          status: "PAID",
           currencyType: "CRYPTO",
           currencyAsset: gift.currency,
           currencyFiat: null,
         });
 
         if (purchase) {
+          const ownerHistory = await createOwnerHistory({
+            previousOwnerId: undefined,
+            ownerId: user.id,
+            purchaseId: purchase.id,
+          });
           // const invoice = cryptoBotClient.createInvoice({
           //   currencyType: CurrencyType.Crypto,
           //   amount: purchase.amount,

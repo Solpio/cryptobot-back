@@ -24,16 +24,18 @@ model UserPhoto {
 }
 
 model User {
-  id           String     @id @default(auto()) @map("_id") @db.ObjectId
-  userPhoto    UserPhoto?
-  tgId         Int        @unique
-  username     String?
-  firstName    String?
-  lastName     String?
-  languageCode String?
-  updatedAt    DateTime   @updatedAt
-  createdAt    DateTime   @default(now())
-  purchases    Purchase[]
+  id                   String                       @id @default(auto()) @map("_id") @db.ObjectId
+  userPhoto            UserPhoto?
+  tgId                 Int                          @unique
+  username             String?
+  firstName            String?
+  lastName             String?
+  languageCode         String?
+  purchases            Purchase[]
+  previousOwnedHistory PurchaseOwnerChangeHistory[] @relation("PreviousOwner")
+  ownedHistory         PurchaseOwnerChangeHistory[] @relation("Owner")
+  updatedAt            DateTime                     @updatedAt
+  createdAt            DateTime                     @default(now())
 }
 
 enum CurrencyAsset {
@@ -91,22 +93,38 @@ model Gift {
 }
 
 model Purchase {
-  id            String         @id @default(auto()) @map("_id") @db.ObjectId
-  amount        Int
-  currencyType  CurrencyType
-  currencyAsset CurrencyAsset?
-  currencyFiat  FiatAsset?
-  recipientTgId Int?
-  status        PurchaseStatus
-  user          User           @relation(fields: [userId], references: [id])
-  userId        String         @db.ObjectId
-  gift          Gift           @relation(fields: [giftId], references: [id])
-  giftId        String         @db.ObjectId
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  id                 String                       @id @default(auto()) @map("_id") @db.ObjectId
+  amount             Int
+  currencyType       CurrencyType
+  currencyAsset      CurrencyAsset?
+  currencyFiat       FiatAsset?
+  recipientTgId      Int?
+  status             PurchaseStatus
+  user               User                         @relation(fields: [userId], references: [id])
+  userId             String                       @db.ObjectId
+  gift               Gift                         @relation(fields: [giftId], references: [id])
+  giftId             String                       @db.ObjectId
+  changeOwnerHistory PurchaseOwnerChangeHistory[]
+  createdAt          DateTime                     @default(now())
+  updatedAt          DateTime                     @updatedAt
 }
 
 enum PurchaseStatus {
   PENDING_PAYMENT
   PAID
+}
+
+model PurchaseOwnerChangeHistory {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  purchase   Purchase @relation(fields: [purchaseId], references: [id])
+  purchaseId String   @db.ObjectId
+
+  previousOwner   User?   @relation("PreviousOwner", fields: [previousOwnerId], references: [id])
+  previousOwnerId String? @db.ObjectId
+
+  owner   User   @relation("Owner", fields: [ownerId], references: [id])
+  ownerId String @db.ObjectId
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
