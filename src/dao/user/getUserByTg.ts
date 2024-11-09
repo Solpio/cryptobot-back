@@ -1,9 +1,11 @@
 import prisma from "../../database/prisma";
 import { User } from "@prisma/client";
 
-export const getUser = async (id: string): Promise<User | null | undefined> => {
+export const getUserByTg = async (
+  tgId: number,
+): Promise<User | null | undefined> => {
   try {
-    const user = await prisma.user.findUnique({ where: { id } });
+    const user = await prisma.user.findUnique({ where: { tgId } });
     console.log("User found: ", user);
     return user;
   } catch (error) {

@@ -4,6 +4,7 @@ import { bot } from "./bot/bot";
 import fastifyCors from "@fastify/cors";
 import { authMiddleware } from "./middlewares/authMiddleware";
 import { purchaseRoutes } from "./routes/purchaseRoutes";
+import { userRoutes } from "./routes/userRoutes";
 
 const server = fastify({ logger: true });
 
@@ -12,6 +13,7 @@ server.register(fastifyCors, {
 });
 server.register(giftRoutes);
 server.register(purchaseRoutes);
+server.register(userRoutes);
 
 server.addHook("preHandler", authMiddleware);
 

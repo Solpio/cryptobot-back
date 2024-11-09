@@ -1,5 +1,5 @@
 import { Bot, InlineKeyboard } from "grammy";
-import { getUser } from "../dao/user/getUser";
+import { getUserByTg } from "../dao/user/getUserByTg";
 import { createUser } from "../dao/user/createUser";
 import { createUserPhoto } from "../dao/userPhoto/createUserPhoto";
 import { User } from "@prisma/client";
@@ -11,7 +11,7 @@ export const bot = new Bot(process.env.BOT_TOKEN ?? "");
 bot.command("start", async (ctx) => {
   let userData: User | null = null;
   if (ctx.from) {
-    const existUser = await getUser(ctx.from.id);
+    const existUser = await getUserByTg(ctx.from.id);
 
     if (!existUser) {
       const tgUser = ctx.from;
