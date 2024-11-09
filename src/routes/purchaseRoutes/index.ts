@@ -81,6 +81,7 @@ export async function purchaseRoutes(fastify: FastifyInstance) {
             amount: purchase.amount,
             asset: currencyToCryptoBotCurrency(purchase.currencyAsset),
             description: `Purchasing a ${gift.name} gift`,
+            payload: purchase.id,
           });
 
           return reply
