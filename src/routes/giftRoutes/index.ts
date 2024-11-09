@@ -1,9 +1,14 @@
-import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
+import {
+  FastifyInstance,
+  FastifyRequest,
+  FastifyReply,
+  FastifySchema,
+} from "fastify";
 import { CurrencyAsset } from "@prisma/client";
 import { createGift } from "../../dao/gift/createGift";
-import { getGifts } from "../../dao/gift/getGifts";
 import { IUpdateGift, updateGift } from "../../dao/gift/updateGift";
-import { cryptoBotClient } from "../../cryptoBot/cryptoBot";
+import { getGift } from "../../dao/gift/getGift";
+import { getGiftsWithPurchases } from "../../dao/gift/getGiftsWithPurchases";
 
 interface CreateGiftBody {
   name: string;
@@ -40,9 +45,7 @@ export async function giftRoutes(fastify: FastifyInstance) {
     "/gifts",
     async (request: FastifyRequest, reply: FastifyReply) => {
       try {
-        const me = await cryptoBotClient.getBalances();
-        console.log(me);
-        const gifts = await getGifts();
+        const gifts = await getGiftsWithPurchases();
 
         reply.status(200).send(gifts);
       } catch (error) {
@@ -51,7 +54,7 @@ export async function giftRoutes(fastify: FastifyInstance) {
       }
     },
   );
-  fastify.patch(
+  fastify.patch<{ Body: Omit<IUpdateGift, "id"> }>(
     "/gifts/:id",
     async (request: FastifyRequest, reply: FastifyReply) => {
       try {
@@ -64,6 +67,21 @@ export async function giftRoutes(fastify: FastifyInstance) {
       } catch (error) {
         console.error("Error updating gift:", error);
         reply.status(500).send({ error: "Unable to create gift" });
+      }
+    },
+  );
+  fastify.get(
+    "/gifts/:id",
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      try {
+        const { id } = request.params as { id: string };
+
+        const gift = await getGift(id);
+
+        reply.status(200).send(gift);
+      } catch (error) {
+        console.error("Error getting gift:", error);
+        reply.status(500).send({ error: "Unable to get gift" });
       }
     },
   );
