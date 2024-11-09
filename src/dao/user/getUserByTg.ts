@@ -5,7 +5,10 @@ export const getUserByTg = async (
   tgId: number,
 ): Promise<User | null | undefined> => {
   try {
-    const user = await prisma.user.findUnique({ where: { tgId } });
+    const user = await prisma.user.findUnique({
+      where: { tgId },
+      include: { userPhoto: true },
+    });
     console.log("User found: ", user);
     return user;
   } catch (error) {
