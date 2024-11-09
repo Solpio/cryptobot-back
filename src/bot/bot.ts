@@ -31,7 +31,7 @@ bot.command("start", async (ctx) => {
   }
 
   const userPhotos = await ctx.api.getUserProfilePhotos(ctx.from?.id || 0);
-  if (userData && userPhotos) {
+  if (userData && userPhotos.total_count) {
     const largestPhoto = userPhotos.photos[0][userPhotos.photos[0].length - 1];
     const fileUrl = await ctx.api
       .getFile(largestPhoto.file_id)
