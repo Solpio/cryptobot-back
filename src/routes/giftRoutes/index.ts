@@ -7,7 +7,7 @@ import { getGiftsWithPurchases } from "../../dao/gift/getGiftsWithPurchases";
 
 interface CreateGiftBody {
   name: string;
-  price: number;
+  price: string;
   currency: CurrencyAsset;
   total: number;
   lottie: any;

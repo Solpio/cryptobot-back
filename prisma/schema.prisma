@@ -81,7 +81,7 @@ enum CurrencyType {
 model Gift {
   id              String        @id @default(auto()) @map("_id") @db.ObjectId
   name            String
-  price           Int
+  price           String
   currency        CurrencyAsset
   total           Int
   lottie          Json
@@ -94,7 +94,7 @@ model Gift {
 
 model Purchase {
   id                 String                       @id @default(auto()) @map("_id") @db.ObjectId
-  amount             Int
+  amount             String
   currencyType       CurrencyType
   currencyAsset      CurrencyAsset?
   currencyFiat       FiatAsset?
