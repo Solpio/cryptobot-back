@@ -8,6 +8,7 @@ import { getIdByToken } from "../../utils/auth";
 import { getUserByTg } from "../../dao/user/getUserByTg";
 import { getUser } from "../../dao/user/getUser";
 import { getUserHistory } from "../../dao/ownerHistory/getUserHistory";
+import { createUser, ICreateUser } from "../../dao/user/createUser";
 
 interface GetUserParams {
   id: string;
@@ -34,6 +35,28 @@ const getUserHistoryParamsSchema: FastifySchema = {
       userId: { type: "string" }, // `id` — обязательный параметр типа string
     },
     required: ["userId"],
+  },
+};
+
+interface IRegisterUserBody {
+  tgId: number;
+  username?: string;
+  languageCode?: string;
+  firstName: string;
+  lastName?: string;
+}
+
+const getRegisterUserBodySchema: FastifySchema = {
+  body: {
+    type: "object",
+    properties: {
+      tgId: { type: "number" },
+      username: { type: "string" },
+      languageCode: { type: "string" },
+      firstName: { type: "string" },
+      lastName: { type: "string" },
+    },
+    required: ["tgId"],
   },
 };
 
@@ -91,6 +114,30 @@ export async function userRoutes(fastify: FastifyInstance) {
       const purchaseHistory = await getUserHistory(userId);
 
       reply.status(200).send(purchaseHistory);
+    },
+  );
+  fastify.post<{ Body: IRegisterUserBody }>(
+    `/user/register`,
+    { schema: getRegisterUserBodySchema },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      const body = request.body as IRegisterUserBody;
+      const userId = +getIdByToken(request.headers.authorization || "");
+      const userExist = await getUserByTg(userId);
+
+      if (userExist) {
+        return reply.status(200).send({ message: "User already exist" });
+      }
+
+      const userDto: ICreateUser = {
+        tgId: body.tgId,
+        username: body.username ? body.username : null,
+        languageCode: body.languageCode ? body.languageCode : null,
+        firstName: body.firstName ? body.firstName : null,
+        lastName: body.lastName ? body.lastName : null,
+      };
+      const user = await createUser(userDto);
+
+      reply.status(200).send(user);
     },
   );
 }

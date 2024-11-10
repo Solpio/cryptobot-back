@@ -1,10 +1,11 @@
-import { Bot, InlineKeyboard } from "grammy";
+import { Bot, InlineKeyboard, InputFile } from "grammy";
 import { getUserByTg } from "../dao/user/getUserByTg";
 import { createUser } from "../dao/user/createUser";
 import { createUserPhoto } from "../dao/userPhoto/createUserPhoto";
 import { User } from "@prisma/client";
 import { getUserPhotoByUser } from "../dao/userPhoto/getUserPhotoByUser";
 import { updateUserPhoto } from "../dao/userPhoto/updateUserPhoto";
+import { join } from "path";
 
 export const bot = new Bot(process.env.BOT_TOKEN ?? "");
 
@@ -57,7 +58,11 @@ bot.command("start", async (ctx) => {
   }
   const webAppUrl = process.env.WEB_APP_URL || "";
   const keyboard = new InlineKeyboard().webApp("Открыть Web App", webAppUrl);
-  await ctx.reply("Нажмите кнопку ниже, чтобы открыть Web App:", {
+  const photoPath = join(__dirname, "img.png");
+
+  const photo = new InputFile(photoPath);
+
+  await ctx.replyWithPhoto(photo, {
     reply_markup: keyboard,
   });
 });

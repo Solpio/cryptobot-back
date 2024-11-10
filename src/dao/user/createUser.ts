@@ -1,7 +1,7 @@
 import { User } from "@prisma/client";
 import prisma from "../../database/prisma";
 
-type ICreateUser = Pick<
+export type ICreateUser = Pick<
   User,
   "tgId" | "firstName" | "lastName" | "username" | "languageCode"
 >;
