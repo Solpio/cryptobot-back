@@ -94,7 +94,7 @@ bot.on("inline_query", async (ctx) => {
         `${webAppUrl}?purchaseId=${purchaseId}&sending=true`,
       );
 
-      await ctx.answerInlineQuery([result], { cache_time: 1 });
+      await ctx.answerInlineQuery([result]);
     }
   }
 });

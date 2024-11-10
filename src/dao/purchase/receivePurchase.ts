@@ -5,29 +5,27 @@ import { createOwnerHistory } from "../ownerHistory/createOwnerHistory";
 
 interface ISendGift {
   purchaseId: string;
-  prevOwnerId: string;
   nextOwnerId: string;
 }
 
-export const sendPurchase = async ({
+export const receivePurchase = async ({
   purchaseId,
-  prevOwnerId,
   nextOwnerId,
 }: ISendGift): Promise<Error | Purchase | undefined> => {
   try {
     const prevHistory = await prisma.purchaseOwnerChangeHistory.findFirst({
-      where: { ownerId: prevOwnerId, purchaseId: purchaseId },
+      where: { purchaseId: purchaseId },
       orderBy: { createdAt: "desc" },
     });
     console.log("Prev history found: ", prevHistory);
 
     if (!prevHistory) {
-      return new Error("Not real owner");
+      return new Error("Purchase history not found");
     }
     const actualHistory = await createOwnerHistory({
       ownerId: nextOwnerId,
       purchaseId,
-      previousOwnerId: prevOwnerId,
+      previousOwnerId: prevHistory.ownerId,
     });
     console.log("History create: ", actualHistory);
     const purchase = await updatePurchase({

@@ -14,7 +14,7 @@ import { createOwnerHistory } from "../../dao/ownerHistory/createOwnerHistory";
 import { cryptoBotClient } from "../../cryptoBot/cryptoBot";
 import { CurrencyType } from "crypto-bot-api";
 import { currencyToCryptoBotCurrency } from "../../utils/currenceToCryproBotCurrency";
-import { sendPurchase } from "../../dao/purchase/sendPurchase";
+import { receivePurchase } from "../../dao/purchase/receivePurchase";
 import { getPurchaseHistory } from "../../dao/ownerHistory/getPurchaseHistory";
 
 interface GetPurchaseBody {
@@ -61,7 +61,6 @@ const getPurchaseByUserParamsSchema: FastifySchema = {
 
 interface SentGiftParams {
   purchaseId: string;
-  recipientId: string;
 }
 
 const sendGiftSchema: FastifySchema = {
@@ -69,9 +68,8 @@ const sendGiftSchema: FastifySchema = {
     type: "object",
     properties: {
       purchaseId: { type: "string" },
-      recipientId: { type: "string" },
     },
-    required: ["purchaseId", "recipientId"],
+    required: ["purchaseId"],
   },
 };
 
@@ -145,23 +143,22 @@ export async function purchaseRoutes(fastify: FastifyInstance) {
     },
   );
   fastify.post<{ Params: SentGiftParams }>(
-    "/purchase/:purchaseId/send-to/:recipientId",
+    "/purchase/:purchaseId/get",
     { schema: sendGiftSchema },
     async (request: FastifyRequest, reply: FastifyReply) => {
       try {
         const userId = +getIdByToken(request.headers.authorization || "");
         const user = await getUserByTg(userId);
 
-        const { purchaseId, recipientId } = request.params as SentGiftParams;
+        const { purchaseId } = request.params as SentGiftParams;
 
         if (!user) {
           return reply.status(404).send({ message: "User not found" });
         }
 
-        const purchase = sendPurchase({
+        const purchase = await receivePurchase({
           purchaseId: purchaseId,
-          nextOwnerId: recipientId,
-          prevOwnerId: user.id,
+          nextOwnerId: user.id,
         });
 
         reply.status(200).send(purchase);
