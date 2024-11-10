@@ -1,5 +1,5 @@
 import { Gift } from "@prisma/client";
-import { getGifts } from "./getGifts";
+import { getGifts } from "../purchase/getGifts";
 import { getPurchasesCountByGift } from "../purchase/getPurchasesCountByGift";
 
 type GifsWithPurchases = Gift & { purchasesCount: number };

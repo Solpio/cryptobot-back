@@ -6,7 +6,7 @@ export const getPurchasesByUser = async (
 ): Promise<Purchase[] | undefined> => {
   try {
     const purchases = await prisma.purchase.findMany({
-      where: { id: userId, status: "PAID" },
+      where: { userId: userId, status: "PAID" },
       include: { user: true },
     });
     console.log("Purchases found: ", purchases);

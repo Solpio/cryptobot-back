@@ -12,8 +12,9 @@ import { getPurchasesByUser } from "../../dao/purchase/getPurchasesByUser";
 import { getUser } from "../../dao/user/getUser";
 import { createOwnerHistory } from "../../dao/ownerHistory/createOwnerHistory";
 import { cryptoBotClient } from "../../cryptoBot/cryptoBot";
-import { CryptoCurrencyCode, CurrencyType } from "crypto-bot-api";
+import { CurrencyType } from "crypto-bot-api";
 import { currencyToCryptoBotCurrency } from "../../utils/currenceToCryproBotCurrency";
+import { sendPurchase } from "../../dao/purchase/sendPurchase";
 
 interface GetPurchaseBody {
   giftId: string;
@@ -40,6 +41,22 @@ const getPurchaseByUserParamsSchema: FastifySchema = {
       id: { type: "string" }, // `id` — обязательный параметр типа string
     },
     required: ["id"],
+  },
+};
+
+interface SentGiftParams {
+  purchaseId: string;
+  recipientId: string;
+}
+
+const sendGiftSchema: FastifySchema = {
+  params: {
+    type: "object",
+    properties: {
+      purchaseId: { type: "string" },
+      recipientId: { type: "string" },
+    },
+    required: ["purchaseId", "recipientId"],
   },
 };
 
@@ -71,7 +88,7 @@ export async function purchaseRoutes(fastify: FastifyInstance) {
         });
 
         if (purchase) {
-          const ownerHistory = await createOwnerHistory({
+          await createOwnerHistory({
             previousOwnerId: undefined,
             ownerId: user.id,
             purchaseId: purchase.id,
@@ -110,6 +127,33 @@ export async function purchaseRoutes(fastify: FastifyInstance) {
       const purchases = await getPurchasesByUser(user.id);
 
       reply.status(200).send(purchases);
+    },
+  );
+  fastify.post<{ Params: SentGiftParams }>(
+    "/purchase/:purchaseId/send-to/:recipientId",
+    { schema: sendGiftSchema },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      try {
+        const userId = +getIdByToken(request.headers.authorization || "");
+        const user = await getUserByTg(userId);
+
+        const { purchaseId, recipientId } = request.params as SentGiftParams;
+
+        if (!user) {
+          return reply.status(404).send({ message: "User not found" });
+        }
+
+        const purchase = sendPurchase({
+          purchaseId: purchaseId,
+          nextOwnerId: recipientId,
+          prevOwnerId: user.id,
+        });
+
+        reply.status(200).send(purchase);
+      } catch (error) {
+        console.error("Error getting gift:", error);
+        reply.status(500).send({ error: "Unable to get gift" });
+      }
     },
   );
 }
