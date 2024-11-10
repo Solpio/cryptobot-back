@@ -64,13 +64,14 @@ bot.command("start", async (ctx) => {
     }
   }
   const webAppUrl = process.env.WEB_APP_URL || "";
-  const keyboard = new InlineKeyboard().webApp("Открыть Web App", webAppUrl);
+  const keyboard = new InlineKeyboard().webApp("Open App", webAppUrl);
   const photoPath = join(__dirname, "img.png");
 
   const photo = new InputFile(photoPath);
 
   await ctx.replyWithPhoto(photo, {
     reply_markup: keyboard,
+    caption: "🎁 Here you can buy and send gifts to your friends",
   });
 });
 
