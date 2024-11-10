@@ -15,6 +15,7 @@ import { cryptoBotClient } from "../../cryptoBot/cryptoBot";
 import { CurrencyType } from "crypto-bot-api";
 import { currencyToCryptoBotCurrency } from "../../utils/currenceToCryproBotCurrency";
 import { sendPurchase } from "../../dao/purchase/sendPurchase";
+import { getPurchaseHistory } from "../../dao/ownerHistory/getPurchaseHistory";
 
 interface GetPurchaseBody {
   giftId: string;
@@ -27,6 +28,20 @@ const postPurchaseRequestSchema: FastifySchema = {
     properties: {
       giftId: { type: "string" },
     },
+  },
+};
+
+interface GetPurchaseHistoryParams {
+  purchaseId: string;
+}
+
+const getPurchaseHistoryParamsSchema: FastifySchema = {
+  params: {
+    type: "object",
+    properties: {
+      purchaseId: { type: "string" }, // `id` — обязательный параметр типа string
+    },
+    required: ["purchaseId"],
   },
 };
 
@@ -154,6 +169,17 @@ export async function purchaseRoutes(fastify: FastifyInstance) {
         console.error("Error getting gift:", error);
         reply.status(500).send({ error: "Unable to get gift" });
       }
+    },
+  );
+  fastify.get<{ Params: GetPurchaseHistoryParams }>(
+    `/purchase/:purchaseId/history`,
+    { schema: getPurchaseHistoryParamsSchema },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      const { purchaseId } = request.params as GetPurchaseHistoryParams;
+
+      const purchaseHistory = await getPurchaseHistory(purchaseId);
+
+      reply.status(200).send(purchaseHistory);
     },
   );
 }

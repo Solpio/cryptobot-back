@@ -7,6 +7,7 @@ import {
 import { getIdByToken } from "../../utils/auth";
 import { getUserByTg } from "../../dao/user/getUserByTg";
 import { getUser } from "../../dao/user/getUser";
+import { getUserHistory } from "../../dao/ownerHistory/getUserHistory";
 
 interface GetUserParams {
   id: string;
@@ -19,6 +20,20 @@ const getUserParamsSchema: FastifySchema = {
       id: { type: "string" }, // `id` — обязательный параметр типа string
     },
     required: ["id"],
+  },
+};
+
+interface GetUserHistoryParams {
+  userId: string;
+}
+
+const getUserHistoryParamsSchema: FastifySchema = {
+  params: {
+    type: "object",
+    properties: {
+      userId: { type: "string" }, // `id` — обязательный параметр типа string
+    },
+    required: ["userId"],
   },
 };
 
@@ -65,6 +80,17 @@ export async function userRoutes(fastify: FastifyInstance) {
         console.error("Error getting user:", error);
         reply.status(500).send({ error: "Unable to get user" });
       }
+    },
+  );
+  fastify.get<{ Params: GetUserHistoryParams }>(
+    `/user/:userId/history`,
+    { schema: getUserHistoryParamsSchema },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      const { userId } = request.params as GetUserHistoryParams;
+
+      const purchaseHistory = await getUserHistory(userId);
+
+      reply.status(200).send(purchaseHistory);
     },
   );
 }

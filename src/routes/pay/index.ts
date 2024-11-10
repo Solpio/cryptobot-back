@@ -2,6 +2,7 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { updatePurchase } from "../../dao/purchase/updatePurchase";
 import { getPurchase } from "../../dao/purchase/getPurchase";
 import { PurchaseStatus } from "@prisma/client";
+import { cryptoPayValidationMiddleware } from "../../middlewares/cryptoPayValidationMiddleware";
 
 export interface IBody {
   update_id: number;
@@ -41,6 +42,7 @@ export interface Payload {
 export async function payRoutes(fastify: FastifyInstance) {
   fastify.post<{ Body: IBody }>(
     "/pay",
+    { preHandler: cryptoPayValidationMiddleware },
     async (request: FastifyRequest, reply: FastifyReply) => {
       try {
         const body = request.body as IBody;
