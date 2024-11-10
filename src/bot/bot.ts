@@ -80,15 +80,19 @@ bot.on("inline_query", async (ctx) => {
   if (purchase) {
     const gift = await getGift(purchase.giftId);
     if (gift) {
-      const webAppUrl = process.env.WEB_APP_URL || "";
+      const webAppUrl = process.env.TELEGRAM_WEB_APP_URL || "";
       const result = InlineQueryResultBuilder.article("1", "Send Gift", {
         thumbnail_url:
           "https://api.ru-1.storage.selcloud.ru/v2/panel/links/9132ea353ab3d3eb0374d9f4bdc41117bb8df38e",
         description: `Send a gift ${gift.name}.`,
-        // reply_markup: new InlineKeyboard().webApp("Открыть Web App", webAppUrl),
       }).text("🎁 I have a <b>gift</b> for you! Tap the button to open it.", {
         parse_mode: "HTML",
       });
+
+      result.reply_markup = new InlineKeyboard().url(
+        "Открыть Web App",
+        `${webAppUrl}?purchaseId=${purchaseId}&sending=true`,
+      );
 
       await ctx.answerInlineQuery([result], { cache_time: 1 });
     }
