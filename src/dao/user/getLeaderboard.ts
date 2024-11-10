@@ -7,12 +7,22 @@ type LeaderboardData = {
   userPhoto: UserPhoto | null;
 } & User;
 
-export const getLeaderboard = async (): Promise<
-  LeaderboardData[] | undefined
-> => {
+export const getLeaderboard = async (
+  search?: string,
+): Promise<LeaderboardData[] | undefined> => {
   try {
     const leaderboard: LeaderboardData[] | undefined = (
-      await prisma.user.findMany({ include: { userPhoto: true } })
+      await prisma.user.findMany({
+        include: { userPhoto: true },
+        where: search
+          ? {
+              OR: [
+                { firstName: { contains: search, mode: "insensitive" } },
+                { lastName: { contains: search, mode: "insensitive" } },
+              ],
+            }
+          : undefined,
+      })
     )?.map((user) => ({
       ...user,
       giftsCount: 0,

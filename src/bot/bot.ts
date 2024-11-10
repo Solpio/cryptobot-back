@@ -75,7 +75,10 @@ bot.command("start", async (ctx) => {
 });
 
 bot.on("inline_query", async (ctx) => {
-  const purchaseId = ctx.inlineQuery.query;
+  const purchaseId = ctx.inlineQuery.query.trim();
+  if (!purchaseId) {
+    return;
+  }
   const purchase = await getPurchase(purchaseId);
   if (purchase) {
     const gift = await getGift(purchase.giftId);
