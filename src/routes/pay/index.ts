@@ -3,6 +3,9 @@ import { updatePurchase } from "../../dao/purchase/updatePurchase";
 import { getPurchase } from "../../dao/purchase/getPurchase";
 import { PurchaseStatus } from "@prisma/client";
 import { cryptoPayValidationMiddleware } from "../../middlewares/cryptoPayValidationMiddleware";
+import { sendPurchaseNotification } from "../../bot/utils/sendPurchaseNotification";
+import { getGift } from "../../dao/gift/getGift";
+import { getUser } from "../../dao/user/getUser";
 
 export interface IBody {
   update_id: number;
@@ -54,6 +57,18 @@ export async function payRoutes(fastify: FastifyInstance) {
               id: purchase.id,
               status: PurchaseStatus.PAID,
             });
+
+            const gift = await getGift(purchase.giftId);
+            const user = await getUser(purchase.userId);
+
+            if (user && gift) {
+              await sendPurchaseNotification({
+                purchaseId: purchase.id,
+                text: `✅ You have purchased the gift of ${gift.name}`,
+                buttonText: "Open Gifts",
+                chatId: user.tgId,
+              });
+            }
           }
         }
 
