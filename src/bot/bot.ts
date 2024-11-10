@@ -1,4 +1,9 @@
-import { Bot, InlineKeyboard, InputFile } from "grammy";
+import {
+  Bot,
+  InlineKeyboard,
+  InputFile,
+  InlineQueryResultBuilder,
+} from "grammy";
 import { getUserByTg } from "../dao/user/getUserByTg";
 import { createUser } from "../dao/user/createUser";
 import { createUserPhoto } from "../dao/userPhoto/createUserPhoto";
@@ -6,6 +11,8 @@ import { User } from "@prisma/client";
 import { getUserPhotoByUser } from "../dao/userPhoto/getUserPhotoByUser";
 import { updateUserPhoto } from "../dao/userPhoto/updateUserPhoto";
 import { join } from "path";
+import { getPurchase } from "../dao/purchase/getPurchase";
+import { getGift } from "../dao/gift/getGift";
 
 export const bot = new Bot(process.env.BOT_TOKEN ?? "");
 
@@ -65,4 +72,25 @@ bot.command("start", async (ctx) => {
   await ctx.replyWithPhoto(photo, {
     reply_markup: keyboard,
   });
+});
+
+bot.on("inline_query", async (ctx) => {
+  const purchaseId = ctx.inlineQuery.query;
+  const purchase = await getPurchase(purchaseId);
+  if (purchase) {
+    const gift = await getGift(purchase.giftId);
+    if (gift) {
+      const webAppUrl = process.env.WEB_APP_URL || "";
+      const result = InlineQueryResultBuilder.article("1", "Send Gift", {
+        thumbnail_url:
+          "https://api.ru-1.storage.selcloud.ru/v2/panel/links/9132ea353ab3d3eb0374d9f4bdc41117bb8df38e",
+        description: `Send a gift ${gift.name}.`,
+        // reply_markup: new InlineKeyboard().webApp("Открыть Web App", webAppUrl),
+      }).text("🎁 I have a <b>gift</b> for you! Tap the button to open it.", {
+        parse_mode: "HTML",
+      });
+
+      await ctx.answerInlineQuery([result], { cache_time: 1 });
+    }
+  }
 });
