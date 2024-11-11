@@ -7,7 +7,10 @@ export const getUserHistory = async (
   try {
     const purchaseHistory = await prisma.purchaseOwnerChangeHistory.findMany({
       where: { OR: [{ ownerId: userId }, { previousOwnerId: userId }] },
-      include: { owner: true, previousOwner: true },
+      include: {
+        owner: { include: { userPhoto: true } },
+        previousOwner: { include: { userPhoto: true } },
+      },
     });
     console.log("User history found: ", purchaseHistory);
     return purchaseHistory;
