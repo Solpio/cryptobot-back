@@ -14,8 +14,8 @@ export const sendPurchaseNotification = async ({
   chatId,
   buttonText,
 }: SendPurchaseNotification) => {
-  const webAppUrl = process.env.WEB_APP_URL || "";
-  const keyboard = new InlineKeyboard().webApp(
+  const webAppUrl = process.env.TELEGRAM_WEB_APP_URL || "";
+  const keyboard = new InlineKeyboard().url(
     buttonText,
     `${webAppUrl}?purchaseId=${purchaseId}`,
   );
