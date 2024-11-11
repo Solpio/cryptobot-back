@@ -10,6 +10,7 @@ export const getPurchaseHistory = async (
       include: {
         owner: { include: { userPhoto: true } },
         previousOwner: { include: { userPhoto: true } },
+        purchase: true,
       },
     });
     console.log("Purchase history found: ", purchaseHistory);
