@@ -18,7 +18,7 @@ export const createPurchase = async (
       data: {
         amount: data.amount,
         currencyType: data.currencyType,
-        currencyFiat: data.currencyFiat,
+        currencyAsset: data.currencyAsset,
         userId: data.userId,
         giftId: data.giftId,
         status: data.status,
