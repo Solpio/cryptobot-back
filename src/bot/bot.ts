@@ -3,6 +3,7 @@ import {
   InlineKeyboard,
   InputFile,
   InlineQueryResultBuilder,
+  GrammyError,
 } from "grammy";
 import { getUserByTg } from "../dao/user/getUserByTg";
 import { createUser } from "../dao/user/createUser";
@@ -100,5 +101,16 @@ bot.on("inline_query", async (ctx) => {
 
       await ctx.answerInlineQuery([result]);
     }
+  }
+});
+
+bot.catch((err) => {
+  console.error("Произошла ошибка:", err);
+
+  // Если ошибка из-за вызова API, можно получить больше информации
+  if (err instanceof GrammyError) {
+    console.error("Ошибка API:", err.description);
+  } else {
+    console.error("Другая ошибка:", err);
   }
 });
