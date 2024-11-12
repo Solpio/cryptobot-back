@@ -17,7 +17,7 @@ export const sendPurchaseNotification = async ({
   const webAppUrl = process.env.TELEGRAM_WEB_APP_URL || "";
   const keyboard = new InlineKeyboard().url(
     buttonText,
-    `${webAppUrl}?purchaseId=${purchaseId}`,
+    `${webAppUrl}?startapp=purchaseid-${purchaseId}`,
   );
 
   await bot.api.sendMessage(chatId, text, { reply_markup: keyboard });

@@ -101,7 +101,7 @@ bot.on("inline_query", async (ctx) => {
 
       result.reply_markup = new InlineKeyboard().url(
         "Открыть Web App",
-        `${webAppUrl}/purchase/${purchaseId}/sending`,
+        `${webAppUrl}?startapp=purchaseidsending-${purchaseId}`,
       );
 
       await ctx.answerInlineQuery([result]);
