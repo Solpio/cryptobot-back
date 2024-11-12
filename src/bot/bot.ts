@@ -66,14 +66,19 @@ bot.command("start", async (ctx) => {
   }
   const webAppUrl = process.env.WEB_APP_URL || "";
   const keyboard = new InlineKeyboard().webApp("Open App", webAppUrl);
-  const photoPath = join(__dirname, "img.png");
+  // const photoPath = join(__dirname, "img.png");
 
-  const photo = new InputFile(photoPath);
+  // const photo = new InputFile(
+  //   "https://017ce380-eb74-48e4-a34a-70ea191fba88.selstorage.ru/img.png",
+  // );
 
-  await ctx.replyWithPhoto(photo, {
-    reply_markup: keyboard,
-    caption: "🎁 Here you can buy and send gifts to your friends",
-  });
+  await ctx.replyWithPhoto(
+    "https://017ce380-eb74-48e4-a34a-70ea191fba88.selstorage.ru/img.png",
+    {
+      reply_markup: keyboard,
+      caption: "🎁 Here you can buy and send gifts to your friends",
+    },
+  );
 });
 
 bot.on("inline_query", async (ctx) => {
@@ -88,7 +93,7 @@ bot.on("inline_query", async (ctx) => {
       const webAppUrl = process.env.TELEGRAM_WEB_APP_URL || "";
       const result = InlineQueryResultBuilder.article("1", "Send Gift", {
         thumbnail_url:
-          "https://api.ru-1.storage.selcloud.ru/v2/panel/links/9132ea353ab3d3eb0374d9f4bdc41117bb8df38e",
+          "https://017ce380-eb74-48e4-a34a-70ea191fba88.selstorage.ru/avatar.png",
         description: `Send a gift ${gift.name}.`,
       }).text("🎁 I have a <b>gift</b> for you! Tap the button to open it.", {
         parse_mode: "HTML",
